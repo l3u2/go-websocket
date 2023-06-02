@@ -4,9 +4,7 @@ import (
 	"encoding/json"
 	zhongwen "github.com/go-playground/locales/zh"
 	ut "github.com/go-playground/universal-translator"
-	"github.com/gorilla/websocket"
 	"github.com/pkg/errors"
-	"go-websocket/define/retcode"
 	"gopkg.in/go-playground/validator.v9"
 	zh2 "gopkg.in/go-playground/validator.v9/translations/zh"
 	"io"
@@ -17,16 +15,6 @@ type RetData struct {
 	Code int         `json:"code"`
 	Msg  string      `json:"msg"`
 	Data interface{} `json:"data"`
-}
-
-func ConnRender(conn *websocket.Conn, data interface{}) (err error) {
-	err = conn.WriteJSON(RetData{
-		Code: retcode.SUCCESS,
-		Msg:  "success",
-		Data: data,
-	})
-
-	return
 }
 
 func Render(w http.ResponseWriter, code int, msg string, data interface{}) (str string) {

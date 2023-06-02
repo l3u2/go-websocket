@@ -1,8 +1,10 @@
 package servers
 
 import (
+	"encoding/json"
 	"github.com/gorilla/websocket"
 	log "github.com/sirupsen/logrus"
+	"go-websocket/define/retcode"
 	"go-websocket/pkg/setting"
 	"go-websocket/tools/util"
 	"net/http"
@@ -53,6 +55,18 @@ func Render(conn *websocket.Conn, messageId string, cmd string, code int, messag
 		Msg:       message,
 		Data:      data,
 	})
+}
+
+func ConnRender(conn *websocket.Conn, data interface{}) (err error) {
+	renderDataJson, _ := json.Marshal(data)
+	err = conn.WriteJSON(RetData{
+		Code: retcode.SUCCESS,
+		Msg:  "success",
+		Cmd:  "connect",
+		Data: string(renderDataJson),
+	})
+
+	return
 }
 
 //监听并发送给客户端信息

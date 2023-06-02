@@ -3,7 +3,6 @@ package servers
 import (
 	"github.com/gorilla/websocket"
 	log "github.com/sirupsen/logrus"
-	"go-websocket/api"
 	"go-websocket/define/retcode"
 	"net/http"
 )
@@ -52,7 +51,7 @@ func (c *Controller) Run(w http.ResponseWriter, r *http.Request) {
 	clientSocket.Read()
 
 	//返回客户端信息
-	if err = api.ConnRender(conn, renderData{ClientId: clientId}); err != nil {
+	if err = ConnRender(conn, renderData{ClientId: clientId}); err != nil {
 		_ = conn.Close()
 		return
 	}
