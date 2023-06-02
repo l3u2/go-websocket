@@ -5,7 +5,6 @@ import (
 	log "github.com/sirupsen/logrus"
 	"go-websocket/api"
 	"go-websocket/define/retcode"
-	"go-websocket/tools/util"
 	"net/http"
 )
 
@@ -40,18 +39,14 @@ func (c *Controller) Run(w http.ResponseWriter, r *http.Request) {
 	conn.SetReadLimit(maxMessageSize)
 
 	//解析参数
-	systemId := r.FormValue("systemId")
-	if len(systemId) == 0 {
-		_ = Render(conn, "", "", retcode.SYSTEM_ID_ERROR, "系统ID不能为空", []string{})
+	clientId := r.FormValue("clientId")
+	if len(clientId) == 0 {
+		_ = Render(conn, "", "", retcode.SYSTEM_ID_ERROR, "客户端ID不能为空", []string{})
 		_ = conn.Close()
 		return
 	}
 
-	clientId := util.GenClientId()
-
-	clientSocket := NewClient(clientId, systemId, conn)
-
-	Manager.AddClient2SystemClient(systemId, clientSocket)
+	clientSocket := NewClient(clientId, conn)
 
 	//读取客户端消息
 	clientSocket.Read()

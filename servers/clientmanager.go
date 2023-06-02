@@ -15,31 +15,16 @@ type ClientManager struct {
 
 	Connect    chan *Client // 连接处理
 	DisConnect chan *Client // 断开连接处理
-
-	GroupLock sync.RWMutex
-	Groups    map[string][]string
-
-	SystemClientsLock sync.RWMutex
-	SystemClients     map[string][]string
 }
 
 func NewClientManager() (clientManager *ClientManager) {
 	clientManager = &ClientManager{
-		ClientIdMap:   make(map[string]*Client),
-		Connect:       make(chan *Client, 10000),
-		DisConnect:    make(chan *Client, 10000),
-		Groups:        make(map[string][]string, 100),
-		SystemClients: make(map[string][]string, 100),
+		ClientIdMap: make(map[string]*Client),
+		Connect:     make(chan *Client, 10000),
+		DisConnect:  make(chan *Client, 10000),
 	}
 
 	return
-}
-
-// 添加到系统客户端列表
-func (manager *ClientManager) AddClient2SystemClient(systemId string, client *Client) {
-	manager.SystemClientsLock.Lock()
-	defer manager.SystemClientsLock.Unlock()
-	manager.SystemClients[systemId] = append(manager.SystemClients[systemId], client.ClientId)
 }
 
 // 管道处理程序
@@ -105,9 +90,6 @@ func (manager *ClientManager) EventDisconnect(client *Client) {
 // 删除客户端
 func (manager *ClientManager) DelClient(client *Client) {
 	manager.delClientIdMap(client.ClientId)
-
-	// 删除系统里的客户端
-	manager.delSystemClient(client)
 }
 
 // 删除clientIdMap
@@ -116,18 +98,6 @@ func (manager *ClientManager) delClientIdMap(clientId string) {
 	defer manager.ClientIdMapLock.Unlock()
 
 	delete(manager.ClientIdMap, clientId)
-}
-
-// 删除系统里的客户端
-func (manager *ClientManager) delSystemClient(client *Client) {
-	manager.SystemClientsLock.Lock()
-	defer manager.SystemClientsLock.Unlock()
-
-	for index, clientId := range manager.SystemClients[client.SystemId] {
-		if clientId == client.ClientId {
-			manager.SystemClients[client.SystemId] = append(manager.SystemClients[client.SystemId][:index], manager.SystemClients[client.SystemId][index+1:]...)
-		}
-	}
 }
 
 // 通过clientId获取
