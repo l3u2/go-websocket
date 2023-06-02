@@ -1,0 +1,9 @@
+.DS_Store
+.idea
+.vscode
+*.local
+*.bak
+go-websocket*
+error.log
+log.log
+log
