@@ -8,6 +8,7 @@ import (
 	"go-websocket/pkg/setting"
 	"go-websocket/tools/util"
 	"net/http"
+	"strconv"
 	"time"
 )
 
@@ -30,6 +31,7 @@ type RetData struct {
 	Code      int         `json:"code"`
 	Msg       string      `json:"msg"`
 	Data      interface{} `json:"data"`
+	Timestamp string      `json:"timestamp"`
 }
 
 // 心跳间隔
@@ -54,16 +56,22 @@ func Render(conn *websocket.Conn, messageId string, cmd string, code int, messag
 		Cmd:       cmd,
 		Msg:       message,
 		Data:      data,
+		Timestamp: Int64ToStr(time.Now().UnixNano()),
 	})
+}
+
+func Int64ToStr(param int64) string {
+	return strconv.FormatInt(param, 10)
 }
 
 func ConnRender(conn *websocket.Conn, data interface{}) (err error) {
 	renderDataJson, _ := json.Marshal(data)
 	err = conn.WriteJSON(RetData{
-		Code: retcode.SUCCESS,
-		Msg:  "success",
-		Cmd:  "connect",
-		Data: string(renderDataJson),
+		Code:      retcode.SUCCESS,
+		Msg:       "success",
+		Cmd:       "connect",
+		Data:      string(renderDataJson),
+		Timestamp: Int64ToStr(time.Now().UnixNano()),
 	})
 
 	return

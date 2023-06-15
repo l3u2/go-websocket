@@ -1,10 +1,8 @@
 package retcode
 
 const (
-	SUCCESS = 0
-	FAIL    = -1
+	SUCCESS = 1
+	FAIL    = 3001
 
-	SYSTEM_ID_ERROR      = -1001
-	ONLINE_MESSAGE_CODE  = 1001
-	OFFLINE_MESSAGE_CODE = 1002
+	SYSTEM_ID_ERROR = 1001
 )
