@@ -1,8 +1,8 @@
 package servers
 
 import (
-	"fmt"
 	"github.com/gorilla/websocket"
+	"strings"
 	"time"
 )
 
@@ -33,12 +33,22 @@ func (c *Client) Read() {
 		for {
 			// 在这里完成客户端和服务端的会话
 			messageType, receiveMsg, err := c.Socket.ReadMessage()
-			fmt.Println("接收到的消息体", string(receiveMsg))
+
 			if err != nil {
 				if messageType == -1 && websocket.IsCloseError(err, websocket.CloseGoingAway, websocket.CloseNormalClosure, websocket.CloseNoStatusReceived) {
 					Manager.DisConnect <- c
 					return
 				} else if messageType != websocket.PingMessage {
+					return
+				}
+			}
+
+			msg := strings.Replace(string(receiveMsg), "\n", "", -1)
+			msg = strings.Replace(msg, "\"", "", -1)
+			if msg == "ping" {
+				// 向客户端发送pong消息
+				if err = PongRender(c.Socket); err != nil {
+					_ = c.Socket.Close()
 					return
 				}
 			}

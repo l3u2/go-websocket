@@ -77,6 +77,18 @@ func ConnRender(conn *websocket.Conn, data interface{}) (err error) {
 	return
 }
 
+func PongRender(conn *websocket.Conn) (err error) {
+	err = conn.WriteJSON(RetData{
+		Code:      retcode.SUCCESS,
+		Msg:       "success",
+		Cmd:       "pong",
+		Data:      "pong",
+		Timestamp: Int64ToStr(time.Now().UnixNano()),
+	})
+
+	return
+}
+
 //监听并发送给客户端信息
 func WriteMessage() {
 	for {
