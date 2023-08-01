@@ -51,6 +51,7 @@ func (c *Client) Read() {
 			msg := strings.Replace(string(receiveMsg), "\n", "", -1)
 			msg = strings.Replace(msg, "\"", "", -1)
 			if msg == "ping" {
+				log.Infof("接收到 [%s] 客户端发送过来的ping消息", c.ClientId)
 				c.LastCheckTime = uint64(time.Now().Unix())
 				// 启动协程循环检查所有客户端最后心跳时间是否大于120s，如果大于120s,做主动下线处理
 				ClientDisConnect()
