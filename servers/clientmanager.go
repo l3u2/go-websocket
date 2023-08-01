@@ -111,3 +111,11 @@ func (manager *ClientManager) GetByClientId(clientId string) (*Client, error) {
 		return client, nil
 	}
 }
+
+// 获取所有的客户端
+func (manager *ClientManager) AllClient() map[string]*Client {
+	manager.ClientIdMapLock.RLock()
+	defer manager.ClientIdMapLock.RUnlock()
+
+	return manager.ClientIdMap
+}
